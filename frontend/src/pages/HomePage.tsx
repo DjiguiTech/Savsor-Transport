@@ -7,6 +7,7 @@ import { HomeFormulesSlider } from "../components/home/HomeFormulesSlider"
 import { HomeGarantie } from "../components/home/HomeGarantie"
 import { HomeHero } from "../components/home/HomeHero"
 import { HomeSolutions } from "../components/home/HomeSolutions"
+import { HomeAvis } from "../components/home/HomeAvis"
 
 export function HomePage() {
   return (
@@ -27,6 +28,7 @@ export function HomePage() {
       <HomeGalleryStrip />
       <HomeFormulesSlider />
       <HomeSolutions />
+      <HomeAvis />
       <HomeFaq />
       <HomeCtaBand />
     </>
