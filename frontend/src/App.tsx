@@ -9,6 +9,7 @@ import { ContactPage } from "./pages/ContactPage"
 import { QuiSommesNousPage } from "./pages/QuiSommesNousPage"
 import { MentionsLegalesPage } from "./pages/MentionsLegalesPage"
 import { PolitiqueConfidentialitePage } from "./pages/PolitiqueConfidentialitePage"
+import { AdminDashboardPage } from "./pages/AdminDashboardPage"
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
             path="/politique-confidentialite"
             element={<PolitiqueConfidentialitePage />}
           />
+          <Route path="/admin" element={<AdminDashboardPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
