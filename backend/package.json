@@ -1,0 +1,29 @@
+{
+  "name": "savsor-transport-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API backend Node.js + PostgreSQL pour Savsor Transport",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:dbpull": "prisma db pull",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "savsor-transport-monorepo": "file:.."
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^7.8.0"
+  }
+}

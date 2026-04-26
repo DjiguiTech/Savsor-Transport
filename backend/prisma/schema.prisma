@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           BigInt   @id @default(autoincrement())
+  email        String   @unique @db.VarChar(255)
+  firstName    String   @map("first_name") @db.VarChar(120)
+  lastName     String   @map("last_name") @db.VarChar(120)
+  passwordHash String   @map("password_hash")
+  role         String   @default("admin") @db.VarChar(50)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("users")
+}
+
+model Contact {
+  id            BigInt   @id @default(autoincrement())
+  name          String   @db.VarChar(200)
+  email         String   @db.VarChar(255)
+  phone         String   @db.VarChar(50)
+  topic         String   @db.VarChar(100)
+  message       String
+  acceptPrivacy Boolean  @default(false) @map("accept_privacy")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([createdAt(sort: Desc)], map: "idx_contacts_created_at")
+  @@map("contacts")
+}
+
+model Quote {
+  id               BigInt    @id @default(autoincrement())
+  name             String    @db.VarChar(200)
+  email            String    @db.VarChar(255)
+  phone            String    @db.VarChar(50)
+  serviceType      String    @map("service_type") @db.VarChar(100)
+  departureAddress String    @map("departure_address")
+  arrivalAddress   String?   @map("arrival_address")
+  preferredDate    DateTime? @map("preferred_date") @db.Date
+  details          String
+  acceptPrivacy    Boolean   @default(false) @map("accept_privacy")
+  status           String    @default("pending") @db.VarChar(50)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([createdAt(sort: Desc)], map: "idx_quotes_created_at")
+  @@index([status], map: "idx_quotes_status")
+  @@map("quotes")
+}
