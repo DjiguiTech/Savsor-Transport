@@ -10,11 +10,13 @@ import { QuiSommesNousPage } from "./pages/QuiSommesNousPage"
 import { MentionsLegalesPage } from "./pages/MentionsLegalesPage"
 import { PolitiqueConfidentialitePage } from "./pages/PolitiqueConfidentialitePage"
 import { AdminDashboardPage } from "./pages/AdminDashboardPage"
+import { AdminLoginPage } from "./pages/AdminLoginPage"
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/demenagement" element={<DemenagementPage />} />

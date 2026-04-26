@@ -47,8 +47,17 @@ export function ContactForm() {
   async function onSubmit(data: ContactFormValues) {
     setSubmitState("idle")
     try {
-      /** Branchement prévu : POST /api/contact — corps : JSON.stringify(data) */
-      await new Promise((r) => setTimeout(r, 600))
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      if (!response.ok) {
+        throw new Error("Echec d'envoi du contact")
+      }
+
       const first = data.name.trim().split(/\s+/)[0] ?? ""
       setThanksFirst(first)
       setSubmitState("success")
@@ -226,8 +235,7 @@ export function ContactForm() {
             role="status"
           >
             Merci{thanksFirst ? `, ${thanksFirst}` : ""} : votre message a bien été
-            enregistré côté interface. L&apos;envoi par e-mail sera activé dès
-            connexion à l&apos;API (phase serveur).
+            enregistré.
           </p>
         )}
         {submitState === "error" && (

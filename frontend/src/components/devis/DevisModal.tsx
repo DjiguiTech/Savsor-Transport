@@ -78,8 +78,17 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
 
   async function onSubmit(data: DevisFormValues) {
     try {
-      /** POST /api/devis — JSON.stringify(data) */
-      await new Promise((r) => setTimeout(r, 650))
+      const response = await fetch("/api/devis", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      if (!response.ok) {
+        throw new Error("Echec de creation du devis")
+      }
+
       const first = data.name.trim().split(/\s+/)[0] ?? ""
       setThanksFirst(first)
       setSubmitOk(true)
@@ -102,7 +111,7 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/50 p-4 sm:items-center"
+      className="fixed inset-0 z-100 flex items-end justify-center bg-black/50 p-4 sm:items-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -153,12 +162,10 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
                 role="status"
               >
                 Merci{thanksFirst ? `, ${thanksFirst}` : ""} : votre demande est
-                enregistrée côté interface. L&apos;envoi automatique vers notre
-                boîte mail sera branché sur{" "}
+                enregistrée. Endpoint utilisé :{" "}
                 <code className="rounded bg-white/80 px-1 text-xs">
                   POST /api/devis
-                </code>{" "}
-                (phase serveur Node + Nodemailer).
+                </code>.
               </p>
               <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <button
