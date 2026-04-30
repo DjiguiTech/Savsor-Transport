@@ -31,8 +31,9 @@ type DevisModalProps = {
 export function DevisModal({ open, onClose }: DevisModalProps) {
   const titleId = useId()
 
-  const [submitOk, setSubmitOk] = useState(false)
+  const [submitState, setSubmitState] = useState<"idle" | "success" | "error">("idle")
   const [thanksFirst, setThanksFirst] = useState("")
+  const [submitMessage, setSubmitMessage] = useState("")
 
   const {
     register,
@@ -59,7 +60,8 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
     /* Réinit à chaque ouverture : légitime pour un modal (règle react-hooks) */
     /* eslint-disable react-hooks/set-state-in-effect */
     setThanksFirst("")
-    setSubmitOk(false)
+    setSubmitState("idle")
+    setSubmitMessage("")
     /* eslint-enable react-hooks/set-state-in-effect */
     const t = window.setTimeout(() => {
       document.getElementById("devis-name")?.focus()
@@ -77,6 +79,8 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
   }, [open])
 
   async function onSubmit(data: DevisFormValues) {
+    setSubmitState("idle")
+    setSubmitMessage("")
     try {
       const response = await fetch("/api/devis", {
         method: "POST",
@@ -86,15 +90,27 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
         body: JSON.stringify(data),
       })
       if (!response.ok) {
-        throw new Error("Echec de creation du devis")
+        let backendMessage = "Envoi impossible pour le moment. Preferez nous joindre par telephone."
+        try {
+          const payload = (await response.json()) as { message?: string }
+          if (payload.message) backendMessage = payload.message
+        } catch {
+          // Ignore JSON parse errors and keep fallback message.
+        }
+        throw new Error(backendMessage)
       }
 
       const first = data.name.trim().split(/\s+/)[0] ?? ""
       setThanksFirst(first)
-      setSubmitOk(true)
+      setSubmitState("success")
       reset()
-    } catch {
-      setSubmitOk(false)
+    } catch (error) {
+      setSubmitState("error")
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "Envoi impossible pour le moment. Preferez nous joindre par telephone.",
+      )
     }
   }
 
@@ -133,9 +149,9 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
                 Demande de devis
               </h2>
               <p className="mt-1 font-body text-sm text-gray-600">
-                {submitOk
-                  ? "Votre demande a bien été enregistrée."
-                  : "Réponse sous 24h en général. Tous les champs avec * sont obligatoires."}
+                {submitState === "success"
+                  ? "Votre demande a bien ete enregistree."
+                  : "Reponse sous 24h en general. Tous les champs avec * sont obligatoires."}
               </p>
             </div>
             <button
@@ -155,7 +171,7 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-5 sm:px-6 sm:pb-6">
-          {submitOk ? (
+          {submitState === "success" ? (
             <div className="py-2">
               <p
                 className="rounded-xl bg-savsor-green/10 px-4 py-4 font-body text-sm leading-relaxed text-savsor-green-dark"
@@ -171,7 +187,7 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    setSubmitOk(false)
+                    setSubmitState("idle")
                     reset()
                     window.setTimeout(
                       () => document.getElementById("devis-name")?.focus(),
@@ -204,6 +220,15 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
             </div>
           ) : (
             <>
+          {submitState === "error" && (
+            <p
+              className="mb-4 rounded-lg bg-red-50 px-3 py-2 font-body text-sm text-red-700"
+              role="alert"
+            >
+              {submitMessage ||
+                "Envoi impossible pour le moment. Preferez nous joindre par telephone."}
+            </p>
+          )}
           <form
             className="space-y-3 sm:space-y-4"
             onSubmit={handleSubmit(onSubmit)}

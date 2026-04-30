@@ -1,4 +1,5 @@
 import { createQuote, getQuotes, updateQuoteStatus } from "./quotes.service.js";
+import { sendQuoteEmails } from "../../services/email.service.js";
 
 export async function listQuotes(_req, res, next) {
   try {
@@ -50,6 +51,17 @@ export async function addQuote(req, res, next) {
       details,
       acceptPrivacy,
     });
+
+    try {
+      await sendQuoteEmails(data);
+    } catch (mailError) {
+      console.error("Erreur envoi e-mails devis:", mailError);
+      return res.status(502).json({
+        status: "error",
+        message:
+          "Votre demande est enregistree, mais l'envoi d'e-mail a echoue. Nous revenons vers vous rapidement.",
+      });
+    }
 
     return res.status(201).json({ status: "success", data });
   } catch (error) {
