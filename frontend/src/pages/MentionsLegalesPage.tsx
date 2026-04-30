@@ -26,7 +26,7 @@ export function MentionsLegalesPage() {
             <li>
               <strong>SAVSOR TRANSPORT</strong>
             </li>
-            <li>11 avenue du Général de Gaulle, 95310 Saint-Ouen-l&apos;Aumône, France</li>
+            <li>11 avenue du Général de Gaulle, 95310 partout en france, France</li>
             <li>
               E-mail :{" "}
               <a

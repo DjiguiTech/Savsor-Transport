@@ -1,12 +1,12 @@
 const ADDRESS_LINES = [
   "11 avenue du Général de Gaulle",
-  "95310 Saint-Ouen-l'Aumône",
+  "95310 partout en france",
 ] as const
 
 const MAP_EMBED =
   "https://maps.google.com/maps?q=" +
   encodeURIComponent(
-    "11 avenue du Général de Gaulle, 95310 Saint-Ouen-l'Aumône, France",
+    "11 avenue du Général de Gaulle, 95310 partout en france, France",
   ) +
   "&hl=fr&z=16&ie=UTF8&iwloc=&output=embed"
 
@@ -67,7 +67,7 @@ export function ContactInfosAndMap() {
           Plan d&apos;accès — SAVSOR TRANSPORT
         </p>
         <iframe
-          title="Carte Google Maps — SAVSOR TRANSPORT, Saint-Ouen-l'Aumône"
+          title="Carte Google Maps — SAVSOR TRANSPORT, partout en france"
           src={MAP_EMBED}
           className="aspect-[4/3] min-h-[240px] w-full border-0 sm:aspect-video sm:min-h-[280px]"
           loading="lazy"
@@ -76,7 +76,7 @@ export function ContactInfosAndMap() {
         />
         <p className="border-t border-gray-100 bg-white px-4 py-2 font-body text-xs text-gray-500">
           <a
-            href="https://www.google.com/maps/search/?api=1&query=11+Avenue+du+G%C3%A9n%C3%A9ral+de+Gaulle,+95310+Saint-Ouen-l'Aum%C3%B4ne"
+            href="https://www.google.com/maps/search/?api=1&query=11+Avenue+du+G%C3%A9n%C3%A9ral+de+Gaulle,+95310+partout+en+france"
             target="_blank"
             rel="noreferrer"
             className="font-semibold text-savsor-blue-mid underline-offset-2 hover:underline"

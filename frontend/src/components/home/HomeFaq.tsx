@@ -16,7 +16,7 @@ const FAQ = [
   },
   {
     q: "Intervenez-vous uniquement dans le 95 ?",
-    a: "Notre base est à Saint-Ouen-l’Aumône : nous couvrons l’Île-de-France au quotidien et organisons des missions au-delà selon vos besoins.",
+    a: "Notre base est partout en france : nous couvrons l’Île-de-France au quotidien et organisons des missions au-delà selon vos besoins.",
   },
 ] as const
 

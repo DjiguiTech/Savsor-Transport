@@ -27,7 +27,7 @@ export function AboutStory() {
               </strong>
               . Installée à{" "}
               <strong className="font-semibold text-gray-900">
-                Saint-Ouen-l&apos;Aumône (95310)
+                partout en france (95310)
               </strong>
               , l&apos;entreprise rayonne sur la région parisienne et intervient
               sur des missions nécessitant souplesse, réactivité et exigence de

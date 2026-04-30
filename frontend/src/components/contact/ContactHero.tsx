@@ -20,7 +20,7 @@ export function ContactHero() {
       </div>
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:py-14 lg:py-16">
         <p className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-savsor-green-light sm:text-sm">
-          Saint-Ouen-l&apos;Aumône · Île-de-France
+          partout en france · Île-de-France
         </p>
         <h1 className="mt-3 max-w-3xl font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
           <span className="text-savsor-green-light">Contact</span> &amp; demandes

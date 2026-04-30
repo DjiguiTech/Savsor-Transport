@@ -21,19 +21,6 @@ export function HomeFormulesSlider() {
           <h2 className="mx-auto mt-3 max-w-3xl font-display text-3xl font-extrabold leading-tight text-savsor-blue sm:text-4xl">
             Trouvez rapidement la prestation qui vous correspond
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl font-body text-gray-600">
-            Inspiré du curseur central des{" "}
-            <a
-              href="https://www.demenageurs-bretons.fr/"
-              className="font-semibold text-savsor-blue-mid underline-offset-2 hover:underline"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Déménageurs Bretons
-            </a>
-            : ajustez le curseur pour visualiser la répartition entre votre
-            participation et notre équipe.
-          </p>
         </div>
 
         <div className="mx-auto mt-12 max-w-2xl">

@@ -7,10 +7,10 @@ export function ContactPage() {
   return (
     <>
       <Helmet>
-        <title>Contact &amp; devis — SAVSOR TRANSPORT | Saint-Ouen-l&apos;Aumône (95)</title>
+        <title>Contact &amp; devis — SAVSOR TRANSPORT | partout en france (95)</title>
         <meta
           name="description"
-          content="Contactez SAVSOR TRANSPORT : formulaire en ligne, téléphone, e-mail et plan d'accès. 11 avenue du Général de Gaulle, 95310 Saint-Ouen-l'Aumône. Réponse sous 24h."
+          content="Contactez SAVSOR TRANSPORT : formulaire en ligne, téléphone, e-mail et plan d'accès. 11 avenue du Général de Gaulle, 95310 partout en france. Réponse sous 24h."
         />
       </Helmet>
       <ContactHero />

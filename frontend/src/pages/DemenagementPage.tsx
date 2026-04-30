@@ -14,7 +14,7 @@ export function DemenagementPage() {
         </title>
         <meta
           name="description"
-          content="Déménagement particuliers et professionnels à Saint-Ouen-l'Aumône. Manutention professionnelle, trois formules détaillées — Éco, Standard, Luxe. Devis sous 24h."
+          content="Déménagement particuliers et professionnels partout en france. Manutention professionnelle, trois formules détaillées — Éco, Standard, Luxe. Devis sous 24h."
         />
       </Helmet>
       <DemenagementHero />

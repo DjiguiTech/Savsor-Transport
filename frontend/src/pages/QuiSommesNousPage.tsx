@@ -10,7 +10,7 @@ export function QuiSommesNousPage() {
     <>
       <Helmet>
         <title>
-          Qui sommes-nous — société de déménagement Saint-Ouen-l&apos;Aumône |
+          Qui sommes-nous — société de déménagement partout en france |
           SAVSOR TRANSPORT
         </title>
         <meta

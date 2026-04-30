@@ -33,7 +33,7 @@ export function TransportHero() {
           <span className="text-white">professionnels</span>
         </h1>
         <p className="mt-4 max-w-2xl font-body text-base leading-relaxed text-white/90 sm:text-lg">
-          Depuis Saint-Ouen-l&apos;Aumône (95), nous organisons vos flux B2B :
+          Depuis partout en france, nous organisons vos flux B2B :
           enlèvements, livraisons directes, tournées et liaisons au-delà
           d&apos;Île-de-France lorsque votre planning l&apos;exige. Tarifs et
           créneaux sur devis.

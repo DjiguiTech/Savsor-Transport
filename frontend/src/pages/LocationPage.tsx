@@ -12,7 +12,7 @@ export function LocationPage() {
         </title>
         <meta
           name="description"
-          content="Location de camion et utilitaires : avec ou sans chauffeur, plusieurs gabarits. Val-d'Oise, Saint-Ouen-l'Aumône, Île-de-France. Devis rapide."
+          content="Location de camion et utilitaires : avec ou sans chauffeur, plusieurs gabarits. Val-d'Oise, partout en france, Île-de-France. Devis rapide."
         />
       </Helmet>
       <LocationHero />
