@@ -135,7 +135,7 @@ export function DemenagementFormulesDetail() {
               <button
                 type="button"
                 onClick={openDevis}
-                className="mt-8 w-full rounded-md bg-savsor-green py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-green-dark"
+                className="mt-8 w-full rounded-md bg-savsor-red py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-red-dark"
               >
                 Obtenir un devis — {f.name}
               </button>

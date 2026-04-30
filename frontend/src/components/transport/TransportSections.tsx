@@ -181,7 +181,7 @@ export function TransportSections() {
               <button
                 type="button"
                 onClick={openDevis}
-                className="mt-6 rounded-md bg-savsor-green px-5 py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-green-light"
+                className="mt-6 rounded-md bg-savsor-red px-5 py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-red-dark"
               >
                 Demander un devis transport
               </button>

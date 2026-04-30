@@ -42,7 +42,7 @@ export function AboutGallery() {
           <button
             type="button"
             onClick={openDevis}
-            className="shrink-0 rounded-md bg-savsor-green px-5 py-2.5 font-display text-sm font-extrabold text-white transition hover:bg-savsor-green-dark lg:self-end"
+            className="shrink-0 rounded-md bg-savsor-red px-5 py-2.5 font-display text-sm font-extrabold text-white transition hover:bg-savsor-red-dark lg:self-end"
           >
             Demander un devis
           </button>

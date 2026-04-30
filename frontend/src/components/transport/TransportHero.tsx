@@ -42,7 +42,7 @@ export function TransportHero() {
           <button
             type="button"
             onClick={openDevis}
-            className="inline-flex items-center justify-center rounded-md bg-savsor-green px-6 py-3 font-display text-sm font-extrabold text-white shadow-lg transition hover:bg-savsor-green-dark sm:text-base"
+            className="inline-flex items-center justify-center rounded-md bg-savsor-red px-6 py-3 font-display text-sm font-extrabold text-white shadow-lg transition hover:bg-savsor-red-dark sm:text-base"
           >
             Devis transport
           </button>

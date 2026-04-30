@@ -194,7 +194,7 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
                       80,
                     )
                   }}
-                  className="rounded-md bg-savsor-green px-5 py-2.5 font-display text-sm font-extrabold text-white transition hover:bg-savsor-green-dark"
+                  className="rounded-md bg-savsor-red px-5 py-2.5 font-display text-sm font-extrabold text-white transition hover:bg-savsor-red-dark"
                 >
                   Nouvelle demande
                 </button>
@@ -439,7 +439,7 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-md bg-savsor-green py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-green-dark disabled:opacity-60 sm:w-auto sm:min-w-[200px] sm:px-8"
+                className="w-full rounded-md bg-savsor-red py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-red-dark disabled:opacity-60 sm:w-auto sm:min-w-[200px] sm:px-8"
               >
                 {isSubmitting ? "Envoi…" : "Envoyer ma demande"}
               </button>

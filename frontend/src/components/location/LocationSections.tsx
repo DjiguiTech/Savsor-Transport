@@ -192,7 +192,7 @@ export function LocationSections() {
                 <button
                   type="button"
                   onClick={openDevis}
-                  className="inline-flex justify-center rounded-md bg-savsor-green px-5 py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-green-light"
+                  className="inline-flex justify-center rounded-md bg-savsor-red px-5 py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-red-dark"
                 >
                   Devis location
                 </button>

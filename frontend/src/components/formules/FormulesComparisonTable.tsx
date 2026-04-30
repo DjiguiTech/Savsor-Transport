@@ -178,7 +178,7 @@ export function FormulesComparisonTable() {
           <button
             type="button"
             onClick={openDevis}
-            className="flex-1 rounded-md bg-savsor-green py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-green-dark"
+            className="flex-1 rounded-md bg-savsor-red py-3 font-display text-sm font-extrabold text-white transition hover:bg-savsor-red-dark"
           >
             Obtenir mon devis
           </button>

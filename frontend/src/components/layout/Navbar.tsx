@@ -57,7 +57,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={openDevis}
-            className="hidden rounded-md bg-savsor-green px-4 py-2 font-display text-sm font-extrabold text-white shadow-sm transition hover:bg-savsor-green-dark sm:inline-flex"
+            className="hidden rounded-md bg-savsor-red px-4 py-2 font-display text-sm font-extrabold text-white shadow-sm transition hover:bg-savsor-red-dark sm:inline-flex"
           >
             Demander un devis
           </button>
@@ -111,7 +111,7 @@ export function Navbar() {
                 setOpen(false)
                 openDevis()
               }}
-              className="mt-2 rounded-md bg-savsor-green px-4 py-3 text-center font-display text-sm font-extrabold text-white"
+              className="mt-2 rounded-md bg-savsor-red px-4 py-3 text-center font-display text-sm font-extrabold text-white"
             >
               Demander un devis
             </button>
