@@ -27,6 +27,7 @@ export function ContactForm() {
     "idle",
   )
   const [thanksFirst, setThanksFirst] = useState("")
+  const [submitMessage, setSubmitMessage] = useState("")
 
   const {
     register,
@@ -46,6 +47,7 @@ export function ContactForm() {
 
   async function onSubmit(data: ContactFormValues) {
     setSubmitState("idle")
+    setSubmitMessage("")
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -55,15 +57,27 @@ export function ContactForm() {
         body: JSON.stringify(data),
       })
       if (!response.ok) {
-        throw new Error("Echec d'envoi du contact")
+        let backendMessage = "Envoi impossible pour le moment. Preferez nous joindre par telephone."
+        try {
+          const payload = (await response.json()) as { message?: string }
+          if (payload.message) backendMessage = payload.message
+        } catch {
+          // Ignore JSON parse errors and keep fallback message.
+        }
+        throw new Error(backendMessage)
       }
 
       const first = data.name.trim().split(/\s+/)[0] ?? ""
       setThanksFirst(first)
       setSubmitState("success")
       reset()
-    } catch {
+    } catch (error) {
       setSubmitState("error")
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "Envoi impossible pour le moment. Preferez nous joindre par telephone.",
+      )
     }
   }
 
@@ -240,7 +254,8 @@ export function ContactForm() {
         )}
         {submitState === "error" && (
           <p className="rounded-lg bg-red-50 px-3 py-2 font-body text-sm text-red-700" role="alert">
-            Envoi impossible pour le moment. Préférez nous joindre par téléphone.
+            {submitMessage ||
+              "Envoi impossible pour le moment. Preferez nous joindre par telephone."}
           </p>
         )}
 

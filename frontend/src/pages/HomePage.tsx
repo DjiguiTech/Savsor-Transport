@@ -18,7 +18,7 @@ export function HomePage() {
         </title>
         <meta
           name="description"
-          content="Déménagement particuliers et pros, transport de marchandises, location de camion avec ou sans chauffeur à Saint-Ouen-l'Aumône (95310). Devis sous 24h."
+          content="Déménagement particuliers et pros, transport de marchandises, location de camion avec ou sans chauffeur partout en france (95310). Devis sous 24h."
         />
       </Helmet>
 

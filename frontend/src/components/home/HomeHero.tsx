@@ -39,7 +39,7 @@ export function HomeHero() {
           <span className="text-white"> et vos transports</span>
         </h1>
         <p className="mt-4 max-w-2xl font-body text-base leading-relaxed text-white/88 sm:text-lg">
-          À Saint-Ouen-l&apos;Aumône et partout en Île-de-France : une équipe
+          Partout en france : une équipe
           structurée, du matériel adapté, et la même obsession du détail — du
           premier carton à la dernière porte refermée.
         </p>
@@ -48,7 +48,7 @@ export function HomeHero() {
           <button
             type="button"
             onClick={openDevis}
-            className="inline-flex items-center justify-center rounded-md bg-savsor-green px-6 py-2.5 text-center font-display text-sm font-extrabold text-white shadow-lg shadow-black/20 transition hover:bg-savsor-green-dark sm:text-base"
+            className="inline-flex items-center justify-center rounded-md bg-savsor-red px-6 py-2.5 text-center font-display text-sm font-extrabold text-white shadow-lg shadow-black/20 transition hover:bg-savsor-red-dark sm:text-base"
           >
             Obtenir mon devis
           </button>

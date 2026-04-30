@@ -13,7 +13,7 @@ export function TransportPage() {
         </title>
         <meta
           name="description"
-          content="Livraison et transport de marchandises pour professionnels : Île-de-France, Val-d'Oise, flux B2B et liaisons nationales sur devis. Saint-Ouen-l'Aumône."
+          content="Livraison et transport de marchandises pour professionnels : Île-de-France, Val-d'Oise, flux B2B et liaisons nationales sur devis. partout en france."
         />
       </Helmet>
       <TransportHero />

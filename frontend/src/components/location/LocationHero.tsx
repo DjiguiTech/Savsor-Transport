@@ -33,7 +33,7 @@ export function LocationHero() {
         </h1>
         <p className="mt-4 max-w-2xl font-body text-base leading-relaxed text-white/90 sm:text-lg">
           Besoin d&apos;un gabarit adapté à votre chargement, pour une journée ou
-          une mission plus longue ? Basés à Saint-Ouen-l&apos;Aumône, nous
+          une mission plus longue ? Basés partout en france, nous
           proposons la location de véhicules utilitaires et de camions selon
           disponibilité — avec un conducteur expérimenté si vous préférez vous
           concentrer sur la déchargement.
@@ -42,7 +42,7 @@ export function LocationHero() {
           <button
             type="button"
             onClick={openDevis}
-            className="inline-flex items-center justify-center rounded-md bg-savsor-green px-6 py-3 font-display text-sm font-extrabold text-white shadow-lg transition hover:bg-savsor-green-dark sm:text-base"
+            className="inline-flex items-center justify-center rounded-md bg-savsor-red px-6 py-3 font-display text-sm font-extrabold text-white shadow-lg transition hover:bg-savsor-red-dark sm:text-base"
           >
             Demander une location
           </button>

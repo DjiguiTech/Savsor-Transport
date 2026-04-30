@@ -41,7 +41,7 @@ export function HomeGarantie() {
           <button
             type="button"
             onClick={openDevis}
-            className="mt-10 inline-flex rounded-md bg-savsor-green px-6 py-3 font-display text-sm font-extrabold text-white shadow-sm transition hover:bg-savsor-green-dark"
+            className="mt-10 inline-flex rounded-md bg-savsor-red px-6 py-3 font-display text-sm font-extrabold text-white shadow-sm transition hover:bg-savsor-red-dark"
           >
             Obtenir mon devis
           </button>

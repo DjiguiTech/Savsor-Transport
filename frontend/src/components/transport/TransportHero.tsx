@@ -33,7 +33,7 @@ export function TransportHero() {
           <span className="text-white">professionnels</span>
         </h1>
         <p className="mt-4 max-w-2xl font-body text-base leading-relaxed text-white/90 sm:text-lg">
-          Depuis Saint-Ouen-l&apos;Aumône (95), nous organisons vos flux B2B :
+          Depuis partout en france, nous organisons vos flux B2B :
           enlèvements, livraisons directes, tournées et liaisons au-delà
           d&apos;Île-de-France lorsque votre planning l&apos;exige. Tarifs et
           créneaux sur devis.
@@ -42,7 +42,7 @@ export function TransportHero() {
           <button
             type="button"
             onClick={openDevis}
-            className="inline-flex items-center justify-center rounded-md bg-savsor-green px-6 py-3 font-display text-sm font-extrabold text-white shadow-lg transition hover:bg-savsor-green-dark sm:text-base"
+            className="inline-flex items-center justify-center rounded-md bg-savsor-red px-6 py-3 font-display text-sm font-extrabold text-white shadow-lg transition hover:bg-savsor-red-dark sm:text-base"
           >
             Devis transport
           </button>

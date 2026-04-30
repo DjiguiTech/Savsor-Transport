@@ -26,7 +26,7 @@ export function PolitiqueConfidentialitePage() {
           </h2>
           <p>
             <strong>SAVSOR TRANSPORT</strong> — 11 avenue du Général de Gaulle,
-            95310 Saint-Ouen-l&apos;Aumône, France.
+            95310 partout en france, France.
             <br />
             Contact :{" "}
             <a

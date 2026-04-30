@@ -23,7 +23,7 @@ export function Footer() {
           </Link>
           <p className="mt-2 max-w-sm font-body text-xs leading-snug text-white/85 sm:text-sm">
             Déménagement, livraison et location de camion avec ou sans chauffeur —
-            Saint-Ouen-l&apos;Aumône (95) et au-delà.
+            partout en france (95) et au-delà.
           </p>
         </div>
         <div>
@@ -66,7 +66,7 @@ export function Footer() {
           <address className="mt-2 not-italic font-body text-xs leading-relaxed text-white/85 sm:text-sm">
             11 avenue du Général de Gaulle
             <br />
-            95310 Saint-Ouen-l&apos;Aumône
+            95310 partout en france
             <br />
             <a className="mt-1 inline-block hover:underline" href="tel:+33624800205">
               06 24 80 02 05
