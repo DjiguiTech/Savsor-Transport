@@ -36,7 +36,7 @@ export function LocationHero() {
           une mission plus longue ? Basés partout en france, nous
           proposons la location de véhicules utilitaires et de camions selon
           disponibilité — avec un conducteur expérimenté si vous préférez vous
-          concentrer sur la déchargement.
+          concentrer sur le déchargement.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <button

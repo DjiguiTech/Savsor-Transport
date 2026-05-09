@@ -16,10 +16,10 @@ export function HomeCtaBand() {
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
-            href="tel:+33624800205"
+            href="tel:+33641392463"
             className="inline-flex items-center justify-center rounded-md border border-white/25 bg-white/10 px-6 py-3 font-display text-sm font-extrabold backdrop-blur transition hover:bg-white/20"
           >
-            06 24 80 02 05
+            06 41 39 24 63
           </a>
           <button
             type="button"

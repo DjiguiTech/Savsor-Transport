@@ -30,18 +30,14 @@ export function MentionsLegalesPage() {
             <li>
               E-mail :{" "}
               <a
-                href="mailto:savsortransport@gmail.com"
+                href="mailto:Contact@savsortransport.com"
                 className="font-semibold text-savsor-blue-mid underline-offset-2 hover:underline"
               >
-                savsortransport@gmail.com
+                Contact@savsortransport.com
               </a>
             </li>
             <li>
               Téléphone :{" "}
-              <a href="tel:+33624800205" className="text-savsor-blue-mid hover:underline">
-                06 24 80 02 05
-              </a>{" "}
-              /{" "}
               <a href="tel:+33641392463" className="text-savsor-blue-mid hover:underline">
                 06 41 39 24 63
               </a>

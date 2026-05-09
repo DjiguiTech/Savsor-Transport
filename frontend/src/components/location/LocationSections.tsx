@@ -197,10 +197,10 @@ export function LocationSections() {
                   Devis location
                 </button>
                 <a
-                  href="tel:+33624800205"
+                  href="tel:+33641392463"
                   className="inline-flex justify-center rounded-md border border-white/30 bg-white/10 px-5 py-3 font-display text-sm font-extrabold backdrop-blur transition hover:bg-white/20"
                 >
-                  06 24 80 02 05
+                  06 41 39 24 63
                 </a>
               </div>
             </div>
