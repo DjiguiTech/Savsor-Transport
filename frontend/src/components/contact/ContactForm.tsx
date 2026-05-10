@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import { formStyles } from "../forms/formStyles"
 import { useDevisModal } from "../../context/DevisModalContext"
+import { apiUrl } from "../../lib/apiBase"
 
 const TOPICS = [
   { value: "", label: "Sélectionnez un sujet" },
@@ -49,7 +50,7 @@ export function ContactForm() {
     setSubmitState("idle")
     setSubmitMessage("")
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(apiUrl("/api/contact"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

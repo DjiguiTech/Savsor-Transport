@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import { formStyles } from "../forms/formStyles"
+import { apiUrl } from "../../lib/apiBase"
 
 export type DevisFormValues = {
   name: string
@@ -82,7 +83,7 @@ export function DevisModal({ open, onClose }: DevisModalProps) {
     setSubmitState("idle")
     setSubmitMessage("")
     try {
-      const response = await fetch("/api/devis", {
+      const response = await fetch(apiUrl("/api/devis"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

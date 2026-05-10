@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { apiUrl } from "../lib/apiBase"
 
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000
 const SESSION_EXPIRY_KEY = "adminSessionExpiresAt"
@@ -114,9 +115,9 @@ export function AdminDashboardPage() {
     async function loadDashboard() {
       try {
         const [statsRes, contactsRes, quotesRes] = await Promise.all([
-          fetch("/api/admin/dashboard-stats"),
-          fetch("/api/contact"),
-          fetch("/api/devis"),
+          fetch(apiUrl("/api/admin/dashboard-stats")),
+          fetch(apiUrl("/api/contact")),
+          fetch(apiUrl("/api/devis")),
         ])
 
         if (!statsRes.ok || !contactsRes.ok || !quotesRes.ok) {
@@ -201,7 +202,7 @@ export function AdminDashboardPage() {
 
   async function updateStatus(quoteId: number, status: QuoteStatus) {
     try {
-      const response = await fetch(`/api/devis/${quoteId}/status`, {
+      const response = await fetch(apiUrl(`/api/devis/${quoteId}/status`), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
