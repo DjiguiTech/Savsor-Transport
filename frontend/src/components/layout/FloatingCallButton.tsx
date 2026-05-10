@@ -2,7 +2,7 @@
 export function FloatingCallButton() {
   return (
     <a
-      href="tel:+33624800205"
+      href="tel:+33641392463"
       className="fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-savsor-green text-white shadow-lg transition hover:bg-savsor-green-dark sm:hidden"
       aria-label="Appeler SAVSOR TRANSPORT"
     >

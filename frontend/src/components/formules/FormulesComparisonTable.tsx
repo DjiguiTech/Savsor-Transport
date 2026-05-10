@@ -17,8 +17,18 @@ const COL_LABELS: Record<(typeof COL_ORDER)[number], { title: string; short: str
 function CellDisplay({ cell }: { cell: ComparisonCell }) {
   if (cell.kind === "yes") {
     return (
-      <span className="inline-flex justify-center text-lg font-bold text-savsor-green" aria-label="Inclus">
-        ✓
+      <span className="inline-flex flex-col items-center gap-0.5">
+        <span
+          className="inline-flex justify-center text-lg font-bold text-savsor-green"
+          aria-label="Inclus"
+        >
+          ✓
+        </span>
+        {cell.detail ? (
+          <span className="max-w-[11rem] font-body text-[10px] leading-tight text-gray-600 sm:max-w-none sm:text-xs">
+            {cell.detail}
+          </span>
+        ) : null}
       </span>
     )
   }

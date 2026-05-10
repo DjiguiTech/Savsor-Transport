@@ -50,9 +50,9 @@ export function ContactInfosAndMap() {
             <br />
             <a
               className="break-all text-savsor-blue-mid underline-offset-2 hover:underline"
-              href="mailto:savsortransport@gmail.com"
+              href="mailto:Contact@savsortransport.com"
             >
-              savsortransport@gmail.com
+              Contact@savsortransport.com
             </a>
           </li>
         </ul>

@@ -1,5 +1,4 @@
-const PHONE_PRIMARY = "tel:+33624800205"
-const PHONE_SECONDARY = "tel:+33641392463"
+const PHONE_HREF = "tel:+33641392463"
 
 export function TopBar() {
   return (
@@ -8,26 +7,17 @@ export function TopBar() {
         <p className="text-center font-body text-white/95">
           Devis sous 24h —{" "}
           <a
-            href={PHONE_PRIMARY}
-            className="font-semibold underline-offset-2 hover:underline"
-          >
-            06 24 80 02 05
-          </a>
-          <span className="mx-2 text-white/50" aria-hidden>
-            /
-          </span>
-          <a
-            href={PHONE_SECONDARY}
+            href={PHONE_HREF}
             className="font-semibold underline-offset-2 hover:underline"
           >
             06 41 39 24 63
           </a>
         </p>
         <a
-          href="mailto:savsortransport@gmail.com"
+          href="mailto:Contact@savsortransport.com"
           className="hidden font-body text-white/90 hover:text-white sm:inline"
         >
-          savsortransport@gmail.com
+          Contact@savsortransport.com
         </a>
       </div>
     </div>

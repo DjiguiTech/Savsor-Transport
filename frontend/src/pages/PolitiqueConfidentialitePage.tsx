@@ -30,10 +30,10 @@ export function PolitiqueConfidentialitePage() {
             <br />
             Contact :{" "}
             <a
-              href="mailto:savsortransport@gmail.com"
+              href="mailto:Contact@savsortransport.com"
               className="font-semibold text-savsor-blue-mid underline-offset-2 hover:underline"
             >
-              savsortransport@gmail.com
+              Contact@savsortransport.com
             </a>
           </p>
         </section>

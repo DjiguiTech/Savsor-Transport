@@ -6,7 +6,7 @@ const FORMULES = [
     name: "Économique",
     tag: "Budget maîtrisé",
     included: [
-      "Livraison préalable de cartons et adhésifs à votre demande",
+      "Livraison préalable de cartons et adhésifs à votre demande (15 cartons standard + 10 cartons livres)",
       "Protection du mobilier (couvertures Supertrans, bulkratt, housses spéciales)",
       "Protection des tableaux et miroirs (Bulpack et cartonnage renforcé)",
       "Mise sous housses neuves de la literie",
@@ -26,7 +26,7 @@ const FORMULES = [
     name: "Standard",
     tag: "L’équilibre le plus demandé",
     included: [
-      "Tout ce qui est inclus dans la formule Économique",
+      "Tout ce qui est inclus dans la formule Économique, avec livraison préalable majorée (25 cartons standard + 20 cartons livres)",
       "Emballage et déballage des objets fragiles (vaisselle, verreries, bibelots…)",
       "Démontage et remontage du mobilier si nécessaire",
       "Formalités pour la réservation de stationnement si nécessaire",

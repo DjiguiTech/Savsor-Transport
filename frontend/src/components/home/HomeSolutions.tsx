@@ -29,7 +29,7 @@ const items = [
 
 export function HomeSolutions() {
   return (
-    <section className="bg-savsor-blue py-16 text-white sm:py-20">
+    <section className="bg-savsor-blue-mid py-16 text-white sm:py-20">
       <div className="mx-auto max-w-6xl px-4">
         <h2 className="font-display text-3xl font-extrabold sm:text-4xl">
           Nos solutions pour aller plus loin

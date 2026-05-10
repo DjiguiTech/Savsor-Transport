@@ -68,12 +68,12 @@ export function Footer() {
             <br />
             95310 partout en france
             <br />
-            <a className="mt-1 inline-block hover:underline" href="tel:+33624800205">
-              06 24 80 02 05
+            <a className="mt-1 inline-block hover:underline" href="tel:+33641392463">
+              06 41 39 24 63
             </a>
             <br />
-            <a className="hover:underline" href="mailto:savsortransport@gmail.com">
-              savsortransport@gmail.com
+            <a className="hover:underline" href="mailto:Contact@savsortransport.com">
+              Contact@savsortransport.com
             </a>
           </address>
         </div>

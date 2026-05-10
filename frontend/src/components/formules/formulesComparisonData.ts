@@ -6,6 +6,8 @@ export type ComparisonCell = {
   kind: CellKind
   /** Surtout pour kind === "text" */
   label?: string
+  /** Précision sous la coche (p.ex. quantités de cartons) */
+  detail?: string
 }
 
 export type ComparisonRow = {
@@ -21,8 +23,14 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
   {
     id: "cartons",
     label: "Livraison préalable de cartons & adhésifs",
-    eco: { kind: "yes" },
-    standard: { kind: "yes" },
+    eco: {
+      kind: "yes",
+      detail: "(15 cartons standard + 10 cartons livres)",
+    },
+    standard: {
+      kind: "yes",
+      detail: "(25 cartons standard + 20 cartons livres)",
+    },
     luxe: { kind: "yes" },
   },
   {
