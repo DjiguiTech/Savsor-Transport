@@ -17,12 +17,26 @@ router.get("/health", async (_req, res) => {
       dbTime: result.rows[0]?.now ?? null,
     });
   } catch (error) {
+    console.error("Health check error:", error);
     res.status(500).json({
       status: "error",
       message: "Impossible d'interroger PostgreSQL",
-      details: error.message,
+      details: error.message || error.toString(),
+      code: error.code,
     });
   }
+});
+
+router.get("/config", (_req, res) => {
+  res.json({
+    nodeEnv: process.env.NODE_ENV,
+    port: process.env.PORT,
+    databaseUrl: process.env.DATABASE_URL ? "✓ Définie" : "✗ Non définie",
+    dbHost: process.env.DB_HOST || "non défini",
+    dbPort: process.env.DB_PORT || "non défini",
+    dbName: process.env.DB_NAME || "non défini",
+    dbUser: process.env.DB_USER || "non défini",
+  });
 });
 
 router.use("/auth", authRoutes);
