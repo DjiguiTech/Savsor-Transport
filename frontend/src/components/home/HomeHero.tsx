@@ -34,9 +34,8 @@ export function HomeHero() {
           Particuliers &amp; professionnels · Devis sous 24h
         </p>
         <h1 className="mt-3 max-w-4xl font-display text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
-          Des professionnels pour{" "}
-          <span className="text-savsor-green-light">votre déménagement</span>
-          <span className="text-white"> et vos transports</span>
+          Vivez le{" "}
+          <span className="text-savsor-green-light">déménagement de vos rêves</span>
         </h1>
         <p className="mt-4 max-w-2xl font-body text-base leading-relaxed text-white/88 sm:text-lg">
           Partout en france : une équipe
