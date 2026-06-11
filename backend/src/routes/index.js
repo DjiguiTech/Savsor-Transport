@@ -4,6 +4,7 @@ import authRoutes from "../modules/auth/auth.routes.js";
 import usersRoutes from "../modules/users/users.routes.js";
 import contactsRoutes from "../modules/contacts/contacts.routes.js";
 import quotesRoutes from "../modules/quotes/quotes.routes.js";
+import reviewsRoutes from "../modules/reviews/reviews.routes.js";
 import adminRoutes from "../modules/admin/admin.routes.js";
 
 const router = Router();
@@ -45,6 +46,7 @@ router.use("/contacts", contactsRoutes);
 router.use("/contact", contactsRoutes);
 router.use("/quotes", quotesRoutes);
 router.use("/devis", quotesRoutes);
+router.use("/reviews", reviewsRoutes);
 router.use("/admin", adminRoutes);
 
 export default router;

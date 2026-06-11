@@ -2,7 +2,7 @@ import { useDevisModal } from "../../context/DevisModalContext"
 import garantiePhoto from "../../assets/image1.jpeg"
 
 const points = [
-  "Protection de vos biens : méthodes de calage, couvertures et matériel pro.",
+  "Protection de vos biens : méthodes de calage, couvertures et matériels pro.",
   "Interlocuteur unique : planning clair, créneaux respectés, coordination logistique.",
   "Moins de stress : nous anticipons accès difficiles, objets lourds et fragiles.",
 ]

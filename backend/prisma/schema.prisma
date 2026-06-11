@@ -50,3 +50,19 @@ model Quote {
   @@index([status], map: "idx_quotes_status")
   @@map("quotes")
 }
+
+model Review {
+  id        BigInt    @id @default(autoincrement())
+  name      String    @db.VarChar(200)
+  email     String    @db.VarChar(255)
+  rating    Int       @db.SmallInt
+  comment   String
+  status    String    @default("pending") @db.VarChar(50)
+  ipAddress String?   @map("ip_address") @db.VarChar(50)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status], map: "idx_reviews_status")
+  @@index([createdAt(sort: Desc)], map: "idx_reviews_created_at")
+  @@map("reviews")
+}

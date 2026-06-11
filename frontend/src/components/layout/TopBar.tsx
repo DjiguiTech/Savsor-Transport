@@ -14,10 +14,10 @@ export function TopBar() {
           </a>
         </p>
         <a
-          href="mailto:Contact@savsortransport.com"
+          href="mailto:contact@savsor-transport.com"
           className="hidden font-body text-white/90 hover:text-white sm:inline"
         >
-          Contact@savsortransport.com
+          contact@savsor-transport.com
         </a>
       </div>
     </div>

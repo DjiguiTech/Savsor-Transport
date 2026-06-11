@@ -72,8 +72,8 @@ export function Footer() {
               06 41 39 24 63
             </a>
             <br />
-            <a className="hover:underline" href="mailto:Contact@savsortransport.com">
-              Contact@savsortransport.com
+            <a className="hover:underline" href="mailto:contact@savsor-transport.com">
+              contact@savsor-transport.com
             </a>
           </address>
         </div>

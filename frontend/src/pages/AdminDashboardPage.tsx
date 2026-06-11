@@ -17,6 +17,21 @@ type DashboardStats = {
   contactsCount: number
   usersCount: number
   pendingQuotesCount: number
+  reviewsCount: number
+  pendingReviewsCount: number
+  approvedReviewsCount: number
+}
+
+type ReviewStatus = "pending" | "approved" | "rejected"
+
+type ReviewItem = {
+  id: number
+  name: string
+  email: string
+  rating: number
+  comment: string
+  status: ReviewStatus
+  createdAt: string
 }
 
 type ContactItem = {
@@ -65,18 +80,35 @@ const STATUS_STYLES: Record<QuoteStatus, string> = {
   cancelled: "border-rose-200 bg-rose-50 text-rose-800",
 }
 
+const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
+  pending: "En attente",
+  approved: "Approuvé",
+  rejected: "Refusé",
+}
+
+const REVIEW_STATUS_STYLES: Record<ReviewStatus, string> = {
+  pending: "border-amber-200 bg-amber-50 text-amber-800",
+  approved: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  rejected: "border-rose-200 bg-rose-50 text-rose-800",
+}
+
 export function AdminDashboardPage() {
   const navigate = useNavigate()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [contacts, setContacts] = useState<ContactItem[]>([])
   const [quotes, setQuotes] = useState<QuoteItem[]>([])
+  const [reviews, setReviews] = useState<ReviewItem[]>([])
   const [quoteFilter, setQuoteFilter] = useState<"all" | QuoteStatus>("all")
+  const [reviewFilter, setReviewFilter] = useState<"all" | ReviewStatus>("all")
   const [contactSearch, setContactSearch] = useState("")
   const [quoteSearch, setQuoteSearch] = useState("")
+  const [reviewSearch, setReviewSearch] = useState("")
   const [contactsPage, setContactsPage] = useState(1)
   const [quotesPage, setQuotesPage] = useState(1)
+  const [reviewsPage, setReviewsPage] = useState(1)
   const [contactsSort, setContactsSort] = useState<"newest" | "oldest">("newest")
   const [quotesSort, setQuotesSort] = useState<"newest" | "oldest">("newest")
+  const [reviewsSort, setReviewsSort] = useState<"newest" | "oldest">("newest")
   const [selectedQuote, setSelectedQuote] = useState<QuoteItem | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -114,13 +146,14 @@ export function AdminDashboardPage() {
 
     async function loadDashboard() {
       try {
-        const [statsRes, contactsRes, quotesRes] = await Promise.all([
+        const [statsRes, contactsRes, quotesRes, reviewsRes] = await Promise.all([
           fetch(apiUrl("/api/admin/dashboard-stats")),
           fetch(apiUrl("/api/contact")),
           fetch(apiUrl("/api/devis")),
+          fetch(apiUrl("/api/reviews")),
         ])
 
-        if (!statsRes.ok || !contactsRes.ok || !quotesRes.ok) {
+        if (!statsRes.ok || !contactsRes.ok || !quotesRes.ok || !reviewsRes.ok) {
           throw new Error("Impossible de charger les donnees admin")
         }
 
@@ -133,14 +166,23 @@ export function AdminDashboardPage() {
         const quotesPayload = (await quotesRes.json()) as {
           data?: QuoteItem[]
         }
+        const reviewsPayload = (await reviewsRes.json()) as {
+          data?: ReviewItem[]
+        }
 
-        if (!statsPayload.data || !contactsPayload.data || !quotesPayload.data) {
+        if (
+          !statsPayload.data ||
+          !contactsPayload.data ||
+          !quotesPayload.data ||
+          !reviewsPayload.data
+        ) {
           throw new Error("Réponse API invalide")
         }
 
         setStats(statsPayload.data)
         setContacts(contactsPayload.data)
         setQuotes(quotesPayload.data)
+        setReviews(reviewsPayload.data)
       } catch {
         setError("Impossible de charger les statistiques admin.")
       } finally {
@@ -229,9 +271,126 @@ export function AdminDashboardPage() {
     }
   }
 
+  async function updateReviewStatus(reviewId: number, status: ReviewStatus) {
+    try {
+      const url = status === "approved" ? "approve" : status === "rejected" ? "reject" : ""
+      if (!url) return
+      const response = await fetch(apiUrl(`/api/reviews/${reviewId}/${url}`), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      const payload = (await response.json()) as { data?: ReviewItem }
+      if (!response.ok) {
+        throw new Error("Echec de mise a jour du statut")
+      }
+      if (!payload.data) {
+        throw new Error("Reponse invalide du serveur")
+      }
+
+      setReviews((prev) =>
+        prev.map((review) => (review.id === reviewId ? payload.data! : review)),
+      )
+      setError(null)
+    } catch (err) {
+      setError("Mise a jour du statut d'avis impossible.")
+      console.error(err)
+    }
+  }
+
+  async function deleteReview(reviewId: number) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet avis ?")) return
+    try {
+      const response = await fetch(apiUrl(`/api/reviews/${reviewId}`), {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        throw new Error("Echec de suppression")
+      }
+
+      setReviews((prev) => prev.filter((review) => review.id !== reviewId))
+      setError(null)
+    } catch {
+      setError("Suppression de l'avis impossible.")
+    }
+  }
+
   function handleLogout() {
     clearAdminSession()
     navigate("/admin/login")
+  }
+
+  function buildWhatsAppUrl(quote: QuoteItem): string {
+    const tel = quote.phone
+      .replace(/\s/g, "")
+      .replace(/^0/, "+33")
+
+    const dateSouhaitee = quote.preferredDate
+      ? new Date(quote.preferredDate).toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })
+      : null
+
+    const message = [
+      `Bonjour ${quote.name},`,
+      ``,
+      `Je suis SAVSOR TRANSPORT. Suite à votre demande de devis pour`,
+      `un ${quote.serviceType} au départ de ${quote.departureAddress}${
+        quote.arrivalAddress ? ` vers ${quote.arrivalAddress}` : ""
+      }${dateSouhaitee ? ` prévu le ${dateSouhaitee}` : ""},`,
+      ``,
+      `je vous contacte afin d'affiner votre devis.`,
+      `Êtes-vous disponible pour en discuter ?`,
+      ``,
+      `Cordialement,`,
+      `L'équipe SAVSOR TRANSPORT`,
+      `📞 06 24 80 02 05`,
+    ].join("\n")
+
+    return `https://wa.me/${tel}?text=${encodeURIComponent(message)}`
+  }
+
+  function buildMailtoUrl(quote: QuoteItem): string {
+    const dateSouhaitee = quote.preferredDate
+      ? new Date(quote.preferredDate).toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })
+      : null
+
+    const subject = encodeURIComponent(
+      `Votre devis SAVSOR TRANSPORT — ${quote.serviceType}`
+    )
+
+    const body = encodeURIComponent(
+      [
+        `Bonjour ${quote.name},`,
+        ``,
+        `Nous avons bien reçu votre demande de devis pour votre ${quote.serviceType}`,
+        `au départ de ${quote.departureAddress}${
+          quote.arrivalAddress ? ` vers ${quote.arrivalAddress}` : ""
+        }${dateSouhaitee ? `, prévu le ${dateSouhaitee}` : ""}.`,
+        ``,
+        `Suite à l'étude de votre dossier, voici notre proposition :`,
+        ``,
+        `[INSÉREZ VOTRE DEVIS ICI]`,
+        ``,
+        `N'hésitez pas à nous appeler pour toute question.`,
+        ``,
+        `Cordialement,`,
+        `L'équipe SAVSOR TRANSPORT`,
+        `📞 06 24 80 02 05 / 06 41 39 24 63`,
+        `🌐 www.savsor-transport.com`,
+      ].join("\n")
+    )
+
+    return `mailto:${quote.email}?subject=${subject}&body=${body}`
   }
 
   const cards: StatCard[] = [
@@ -251,15 +410,16 @@ export function AdminDashboardPage() {
       delta: "Comptes créés",
     },
     {
-      label: "Devis en attente",
-      value: String(stats?.pendingQuotesCount ?? 0),
-      delta: "Statut pending",
+      label: "Avis clients",
+      value: String(stats?.reviewsCount ?? 0),
+      delta: `${stats?.approvedReviewsCount ?? 0} approuvés`,
     },
   ]
 
   const pendingItems = [
     `${stats?.pendingQuotesCount ?? 0} demande(s) de devis en attente`,
     `${stats?.contactsCount ?? 0} message(s) de contact reçus`,
+    `${stats?.pendingReviewsCount ?? 0} avis en attente de modération`,
   ]
 
   const ITEMS_PER_PAGE = 8
@@ -303,11 +463,30 @@ export function AdminDashboardPage() {
       return quotesSort === "newest" ? timeB - timeA : timeA - timeB
     })
 
+  const filteredReviews = reviews
+    .filter((review) => (reviewFilter === "all" ? true : review.status === reviewFilter))
+    .filter((review) => {
+      const search = reviewSearch.trim().toLowerCase()
+      if (!search) return true
+      return (
+        review.name.toLowerCase().includes(search) ||
+        review.email.toLowerCase().includes(search) ||
+        review.comment.toLowerCase().includes(search)
+      )
+    })
+    .sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime()
+      const timeB = new Date(b.createdAt).getTime()
+      return reviewsSort === "newest" ? timeB - timeA : timeA - timeB
+    })
+
   const totalContactsPages = Math.max(1, Math.ceil(filteredContacts.length / ITEMS_PER_PAGE))
   const totalQuotesPages = Math.max(1, Math.ceil(filteredQuotes.length / ITEMS_PER_PAGE))
+  const totalReviewsPages = Math.max(1, Math.ceil(filteredReviews.length / ITEMS_PER_PAGE))
 
   const safeContactsPage = Math.min(contactsPage, totalContactsPages)
   const safeQuotesPage = Math.min(quotesPage, totalQuotesPages)
+  const safeReviewsPage = Math.min(reviewsPage, totalReviewsPages)
 
   const paginatedContacts = filteredContacts.slice(
     (safeContactsPage - 1) * ITEMS_PER_PAGE,
@@ -316,6 +495,10 @@ export function AdminDashboardPage() {
   const paginatedQuotes = filteredQuotes.slice(
     (safeQuotesPage - 1) * ITEMS_PER_PAGE,
     safeQuotesPage * ITEMS_PER_PAGE,
+  )
+  const paginatedReviews = filteredReviews.slice(
+    (safeReviewsPage - 1) * ITEMS_PER_PAGE,
+    safeReviewsPage * ITEMS_PER_PAGE,
   )
 
   useEffect(() => {
@@ -468,6 +651,7 @@ export function AdminDashboardPage() {
                     <th className="px-2 py-2">Telephone</th>
                     <th className="px-2 py-2">Sujet</th>
                     <th className="px-2 py-2">Message</th>
+                    <th className="px-2 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -478,6 +662,34 @@ export function AdminDashboardPage() {
                       <td className="px-2 py-2">{contact.phone}</td>
                       <td className="px-2 py-2">{contact.topic}</td>
                       <td className="px-2 py-2 text-slate-600">{contact.message}</td>
+                      <td className="px-2 py-2">
+                        <div className="flex flex-col gap-1.5 min-w-[130px]">
+                          <a
+                            href={`https://wa.me/${contact.phone.replace(/\s/g, "").replace(/^0/, "+33")}?text=${encodeURIComponent(
+                              `Bonjour ${contact.name}, je suis SAVSOR TRANSPORT. Suite à votre message concernant "${contact.topic}", je vous contacte pour vous répondre. Êtes-vous disponible pour en discuter ?\n\nCordialement,\nL'équipe SAVSOR TRANSPORT\n📞 06 24 80 02 05`
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
+                            style={{ backgroundColor: "#25D366" }}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                            </svg>
+                            WhatsApp
+                          </a>
+                          <a
+                            href={`mailto:${contact.email}?subject=${encodeURIComponent(
+                              `Réponse SAVSOR TRANSPORT — ${contact.topic}`
+                            )}&body=${encodeURIComponent(
+                              `Bonjour ${contact.name},\n\nMerci pour votre message concernant "${contact.topic}".\n\n[VOTRE RÉPONSE ICI]\n\nCordialement,\nL'équipe SAVSOR TRANSPORT\n📞 06 24 80 02 05\n🌐 www.savsor-transport.com`
+                            )}`}
+                            className="inline-flex items-center justify-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800 transition hover:bg-blue-100"
+                          >
+                            ✉️ Email
+                          </a>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -570,13 +782,41 @@ export function AdminDashboardPage() {
                         </select>
                       </td>
                       <td className="px-2 py-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedQuote(quote)}
-                          className="rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
-                        >
-                          Voir details
-                        </button>
+                        <div className="flex flex-col gap-1.5 min-w-[140px]">
+                          <a
+                            href={buildWhatsAppUrl(quote)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
+                            style={{ backgroundColor: "#25D366" }}
+                          >
+                            <svg
+                              width="13"
+                              height="13"
+                              viewBox="0 0 24 24"
+                              fill="white"
+                              aria-hidden="true"
+                            >
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                            </svg>
+                            WhatsApp
+                          </a>
+
+                          <a
+                            href={buildMailtoUrl(quote)}
+                            className="inline-flex items-center justify-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800 transition hover:bg-blue-100"
+                          >
+                            ✉️ Email
+                          </a>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelectedQuote(quote)}
+                            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                          >
+                            Voir détails
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -600,6 +840,134 @@ export function AdminDashboardPage() {
                   type="button"
                   onClick={() => setQuotesPage((p) => Math.min(totalQuotesPages, p + 1))}
                   disabled={safeQuotesPage === totalQuotesPages}
+                  className="rounded border border-slate-200 px-3 py-1 disabled:opacity-50"
+                >
+                  Suivant
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <h2 className="text-xl font-bold text-slate-900">Avis clients</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <input
+                type="text"
+                value={reviewSearch}
+                onChange={(e) => {
+                  setReviewSearch(e.target.value)
+                  setReviewsPage(1)
+                }}
+                placeholder="Rechercher nom, email, commentaire..."
+                className="rounded-md border border-slate-200 px-3 py-2 text-sm"
+              />
+              <select
+                value={reviewsSort}
+                onChange={(e) => setReviewsSort(e.target.value as "newest" | "oldest")}
+                className="rounded-md border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="newest">Plus récents</option>
+                <option value="oldest">Plus anciens</option>
+              </select>
+              <select
+                value={reviewFilter}
+                onChange={(e) => {
+                  setReviewFilter(e.target.value as "all" | ReviewStatus)
+                  setReviewsPage(1)
+                }}
+                className="rounded-md border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="all">Tous ({reviews.length})</option>
+                <option value="pending">En attente ({stats?.pendingReviewsCount ?? 0})</option>
+                <option value="approved">Approuvés ({stats?.approvedReviewsCount ?? 0})</option>
+                <option value="rejected">Refusés</option>
+              </select>
+            </div>
+            <div className="mt-4 overflow-x-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 text-slate-500">
+                    <th className="px-2 py-2">Nom</th>
+                    <th className="px-2 py-2">Email</th>
+                    <th className="px-2 py-2">Note</th>
+                    <th className="px-2 py-2">Commentaire</th>
+                    <th className="px-2 py-2">Statut</th>
+                    <th className="px-2 py-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedReviews.map((review) => (
+                    <tr key={review.id} className="border-b border-slate-100 align-top">
+                      <td className="px-2 py-2 font-medium text-slate-900">{review.name}</td>
+                      <td className="px-2 py-2 text-slate-600">{review.email}</td>
+                      <td className="px-2 py-2">
+                        <span className="text-savsor-green font-bold">
+                          {'★'.repeat(review.rating)}
+                        </span>
+                      </td>
+                      <td className="max-w-xs px-2 py-2 text-slate-600 truncate">
+                        {review.comment}
+                      </td>
+                      <td className="px-2 py-2">
+                        <span
+                          className={`inline-flex rounded-md border px-2 py-1 text-xs font-semibold ${
+                            REVIEW_STATUS_STYLES[review.status]
+                          }`}
+                        >
+                          {REVIEW_STATUS_LABELS[review.status]}
+                        </span>
+                      </td>
+                      <td className="px-2 py-2">
+                        <div className="flex flex-col gap-1.5 min-w-[110px]">
+                          {review.status === "pending" && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => updateReviewStatus(review.id, "approved")}
+                                className="rounded-md bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-200 transition"
+                              >
+                                ✓ Approuver
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => updateReviewStatus(review.id, "rejected")}
+                                className="rounded-md bg-rose-100 px-3 py-1.5 text-xs font-semibold text-rose-800 hover:bg-rose-200 transition"
+                              >
+                                ✕ Refuser
+                              </button>
+                            </>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => deleteReview(review.id)}
+                            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
+                          >
+                            🗑️ Supprimer
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+              <p>
+                Page {safeReviewsPage} / {totalReviewsPages} ({filteredReviews.length} résultat(s))
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setReviewsPage((p) => Math.max(1, p - 1))}
+                  disabled={safeReviewsPage === 1}
+                  className="rounded border border-slate-200 px-3 py-1 disabled:opacity-50"
+                >
+                  Précédent
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReviewsPage((p) => Math.min(totalReviewsPages, p + 1))}
+                  disabled={safeReviewsPage === totalReviewsPages}
                   className="rounded border border-slate-200 px-3 py-1 disabled:opacity-50"
                 >
                   Suivant
@@ -676,6 +1044,35 @@ export function AdminDashboardPage() {
                 {selectedQuote.details || "Aucun detail fourni."}
               </p>
             </article>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a
+                href={buildWhatsAppUrl(selectedQuote)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                style={{ backgroundColor: "#25D366" }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                Répondre via WhatsApp
+              </a>
+
+              <a
+                href={buildMailtoUrl(selectedQuote)}
+                className="inline-flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-semibold text-blue-800 transition hover:bg-blue-100"
+              >
+                ✉️ Répondre par email
+              </a>
+
+              <a
+                href={`tel:${selectedQuote.phone}`}
+                className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+              >
+                📞 {selectedQuote.phone}
+              </a>
+            </div>
           </section>
         </div>
       ) : null}
