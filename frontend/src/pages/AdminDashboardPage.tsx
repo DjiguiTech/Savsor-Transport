@@ -17,6 +17,21 @@ type DashboardStats = {
   contactsCount: number
   usersCount: number
   pendingQuotesCount: number
+  reviewsCount: number
+  pendingReviewsCount: number
+  approvedReviewsCount: number
+}
+
+type ReviewStatus = "pending" | "approved" | "rejected"
+
+type ReviewItem = {
+  id: number
+  name: string
+  email: string
+  rating: number
+  comment: string
+  status: ReviewStatus
+  createdAt: string
 }
 
 type ContactItem = {
@@ -65,18 +80,35 @@ const STATUS_STYLES: Record<QuoteStatus, string> = {
   cancelled: "border-rose-200 bg-rose-50 text-rose-800",
 }
 
+const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
+  pending: "En attente",
+  approved: "Approuvé",
+  rejected: "Refusé",
+}
+
+const REVIEW_STATUS_STYLES: Record<ReviewStatus, string> = {
+  pending: "border-amber-200 bg-amber-50 text-amber-800",
+  approved: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  rejected: "border-rose-200 bg-rose-50 text-rose-800",
+}
+
 export function AdminDashboardPage() {
   const navigate = useNavigate()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [contacts, setContacts] = useState<ContactItem[]>([])
   const [quotes, setQuotes] = useState<QuoteItem[]>([])
+  const [reviews, setReviews] = useState<ReviewItem[]>([])
   const [quoteFilter, setQuoteFilter] = useState<"all" | QuoteStatus>("all")
+  const [reviewFilter, setReviewFilter] = useState<"all" | ReviewStatus>("all")
   const [contactSearch, setContactSearch] = useState("")
   const [quoteSearch, setQuoteSearch] = useState("")
+  const [reviewSearch, setReviewSearch] = useState("")
   const [contactsPage, setContactsPage] = useState(1)
   const [quotesPage, setQuotesPage] = useState(1)
+  const [reviewsPage, setReviewsPage] = useState(1)
   const [contactsSort, setContactsSort] = useState<"newest" | "oldest">("newest")
   const [quotesSort, setQuotesSort] = useState<"newest" | "oldest">("newest")
+  const [reviewsSort, setReviewsSort] = useState<"newest" | "oldest">("newest")
   const [selectedQuote, setSelectedQuote] = useState<QuoteItem | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -114,13 +146,14 @@ export function AdminDashboardPage() {
 
     async function loadDashboard() {
       try {
-        const [statsRes, contactsRes, quotesRes] = await Promise.all([
+        const [statsRes, contactsRes, quotesRes, reviewsRes] = await Promise.all([
           fetch(apiUrl("/api/admin/dashboard-stats")),
           fetch(apiUrl("/api/contact")),
           fetch(apiUrl("/api/devis")),
+          fetch(apiUrl("/api/reviews")),
         ])
 
-        if (!statsRes.ok || !contactsRes.ok || !quotesRes.ok) {
+        if (!statsRes.ok || !contactsRes.ok || !quotesRes.ok || !reviewsRes.ok) {
           throw new Error("Impossible de charger les donnees admin")
         }
 
@@ -133,14 +166,23 @@ export function AdminDashboardPage() {
         const quotesPayload = (await quotesRes.json()) as {
           data?: QuoteItem[]
         }
+        const reviewsPayload = (await reviewsRes.json()) as {
+          data?: ReviewItem[]
+        }
 
-        if (!statsPayload.data || !contactsPayload.data || !quotesPayload.data) {
+        if (
+          !statsPayload.data ||
+          !contactsPayload.data ||
+          !quotesPayload.data ||
+          !reviewsPayload.data
+        ) {
           throw new Error("Réponse API invalide")
         }
 
         setStats(statsPayload.data)
         setContacts(contactsPayload.data)
         setQuotes(quotesPayload.data)
+        setReviews(reviewsPayload.data)
       } catch {
         setError("Impossible de charger les statistiques admin.")
       } finally {
@@ -226,6 +268,53 @@ export function AdminDashboardPage() {
       setError(null)
     } catch {
       setError("Mise a jour du statut impossible.")
+    }
+  }
+
+  async function updateReviewStatus(reviewId: number, status: ReviewStatus) {
+    try {
+      const url = status === "approved" ? "approve" : status === "rejected" ? "reject" : ""
+      if (!url) return
+      const response = await fetch(apiUrl(`/api/reviews/${reviewId}/${url}`), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      const payload = (await response.json()) as { data?: ReviewItem }
+      if (!response.ok) {
+        throw new Error("Echec de mise a jour du statut")
+      }
+      if (!payload.data) {
+        throw new Error("Reponse invalide du serveur")
+      }
+
+      setReviews((prev) =>
+        prev.map((review) => (review.id === reviewId ? payload.data! : review)),
+      )
+      setError(null)
+    } catch (err) {
+      setError("Mise a jour du statut d'avis impossible.")
+      console.error(err)
+    }
+  }
+
+  async function deleteReview(reviewId: number) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet avis ?")) return
+    try {
+      const response = await fetch(apiUrl(`/api/reviews/${reviewId}`), {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        throw new Error("Echec de suppression")
+      }
+
+      setReviews((prev) => prev.filter((review) => review.id !== reviewId))
+      setError(null)
+    } catch {
+      setError("Suppression de l'avis impossible.")
     }
   }
 
@@ -321,15 +410,16 @@ export function AdminDashboardPage() {
       delta: "Comptes créés",
     },
     {
-      label: "Devis en attente",
-      value: String(stats?.pendingQuotesCount ?? 0),
-      delta: "Statut pending",
+      label: "Avis clients",
+      value: String(stats?.reviewsCount ?? 0),
+      delta: `${stats?.approvedReviewsCount ?? 0} approuvés`,
     },
   ]
 
   const pendingItems = [
     `${stats?.pendingQuotesCount ?? 0} demande(s) de devis en attente`,
     `${stats?.contactsCount ?? 0} message(s) de contact reçus`,
+    `${stats?.pendingReviewsCount ?? 0} avis en attente de modération`,
   ]
 
   const ITEMS_PER_PAGE = 8
@@ -373,11 +463,30 @@ export function AdminDashboardPage() {
       return quotesSort === "newest" ? timeB - timeA : timeA - timeB
     })
 
+  const filteredReviews = reviews
+    .filter((review) => (reviewFilter === "all" ? true : review.status === reviewFilter))
+    .filter((review) => {
+      const search = reviewSearch.trim().toLowerCase()
+      if (!search) return true
+      return (
+        review.name.toLowerCase().includes(search) ||
+        review.email.toLowerCase().includes(search) ||
+        review.comment.toLowerCase().includes(search)
+      )
+    })
+    .sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime()
+      const timeB = new Date(b.createdAt).getTime()
+      return reviewsSort === "newest" ? timeB - timeA : timeA - timeB
+    })
+
   const totalContactsPages = Math.max(1, Math.ceil(filteredContacts.length / ITEMS_PER_PAGE))
   const totalQuotesPages = Math.max(1, Math.ceil(filteredQuotes.length / ITEMS_PER_PAGE))
+  const totalReviewsPages = Math.max(1, Math.ceil(filteredReviews.length / ITEMS_PER_PAGE))
 
   const safeContactsPage = Math.min(contactsPage, totalContactsPages)
   const safeQuotesPage = Math.min(quotesPage, totalQuotesPages)
+  const safeReviewsPage = Math.min(reviewsPage, totalReviewsPages)
 
   const paginatedContacts = filteredContacts.slice(
     (safeContactsPage - 1) * ITEMS_PER_PAGE,
@@ -386,6 +495,10 @@ export function AdminDashboardPage() {
   const paginatedQuotes = filteredQuotes.slice(
     (safeQuotesPage - 1) * ITEMS_PER_PAGE,
     safeQuotesPage * ITEMS_PER_PAGE,
+  )
+  const paginatedReviews = filteredReviews.slice(
+    (safeReviewsPage - 1) * ITEMS_PER_PAGE,
+    safeReviewsPage * ITEMS_PER_PAGE,
   )
 
   useEffect(() => {
@@ -727,6 +840,134 @@ export function AdminDashboardPage() {
                   type="button"
                   onClick={() => setQuotesPage((p) => Math.min(totalQuotesPages, p + 1))}
                   disabled={safeQuotesPage === totalQuotesPages}
+                  className="rounded border border-slate-200 px-3 py-1 disabled:opacity-50"
+                >
+                  Suivant
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <h2 className="text-xl font-bold text-slate-900">Avis clients</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <input
+                type="text"
+                value={reviewSearch}
+                onChange={(e) => {
+                  setReviewSearch(e.target.value)
+                  setReviewsPage(1)
+                }}
+                placeholder="Rechercher nom, email, commentaire..."
+                className="rounded-md border border-slate-200 px-3 py-2 text-sm"
+              />
+              <select
+                value={reviewsSort}
+                onChange={(e) => setReviewsSort(e.target.value as "newest" | "oldest")}
+                className="rounded-md border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="newest">Plus récents</option>
+                <option value="oldest">Plus anciens</option>
+              </select>
+              <select
+                value={reviewFilter}
+                onChange={(e) => {
+                  setReviewFilter(e.target.value as "all" | ReviewStatus)
+                  setReviewsPage(1)
+                }}
+                className="rounded-md border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="all">Tous ({reviews.length})</option>
+                <option value="pending">En attente ({stats?.pendingReviewsCount ?? 0})</option>
+                <option value="approved">Approuvés ({stats?.approvedReviewsCount ?? 0})</option>
+                <option value="rejected">Refusés</option>
+              </select>
+            </div>
+            <div className="mt-4 overflow-x-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 text-slate-500">
+                    <th className="px-2 py-2">Nom</th>
+                    <th className="px-2 py-2">Email</th>
+                    <th className="px-2 py-2">Note</th>
+                    <th className="px-2 py-2">Commentaire</th>
+                    <th className="px-2 py-2">Statut</th>
+                    <th className="px-2 py-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedReviews.map((review) => (
+                    <tr key={review.id} className="border-b border-slate-100 align-top">
+                      <td className="px-2 py-2 font-medium text-slate-900">{review.name}</td>
+                      <td className="px-2 py-2 text-slate-600">{review.email}</td>
+                      <td className="px-2 py-2">
+                        <span className="text-savsor-green font-bold">
+                          {'★'.repeat(review.rating)}
+                        </span>
+                      </td>
+                      <td className="max-w-xs px-2 py-2 text-slate-600 truncate">
+                        {review.comment}
+                      </td>
+                      <td className="px-2 py-2">
+                        <span
+                          className={`inline-flex rounded-md border px-2 py-1 text-xs font-semibold ${
+                            REVIEW_STATUS_STYLES[review.status]
+                          }`}
+                        >
+                          {REVIEW_STATUS_LABELS[review.status]}
+                        </span>
+                      </td>
+                      <td className="px-2 py-2">
+                        <div className="flex flex-col gap-1.5 min-w-[110px]">
+                          {review.status === "pending" && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => updateReviewStatus(review.id, "approved")}
+                                className="rounded-md bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-200 transition"
+                              >
+                                ✓ Approuver
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => updateReviewStatus(review.id, "rejected")}
+                                className="rounded-md bg-rose-100 px-3 py-1.5 text-xs font-semibold text-rose-800 hover:bg-rose-200 transition"
+                              >
+                                ✕ Refuser
+                              </button>
+                            </>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => deleteReview(review.id)}
+                            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
+                          >
+                            🗑️ Supprimer
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+              <p>
+                Page {safeReviewsPage} / {totalReviewsPages} ({filteredReviews.length} résultat(s))
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setReviewsPage((p) => Math.max(1, p - 1))}
+                  disabled={safeReviewsPage === 1}
+                  className="rounded border border-slate-200 px-3 py-1 disabled:opacity-50"
+                >
+                  Précédent
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReviewsPage((p) => Math.min(totalReviewsPages, p + 1))}
+                  disabled={safeReviewsPage === totalReviewsPages}
                   className="rounded border border-slate-200 px-3 py-1 disabled:opacity-50"
                 >
                   Suivant

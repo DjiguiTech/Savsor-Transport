@@ -23,14 +23,8 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
   {
     id: "cartons",
     label: "Livraison préalable de cartons & adhésifs",
-    eco: {
-      kind: "yes",
-      detail: "(15 cartons standard + 10 cartons livres)",
-    },
-    standard: {
-      kind: "yes",
-      detail: "(25 cartons standard + 20 cartons livres)",
-    },
+    eco: { kind: "yes" },
+    standard: { kind: "yes" },
     luxe: { kind: "yes" },
   },
   {
